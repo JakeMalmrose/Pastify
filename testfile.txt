@@ -1,1 +1,3 @@
 im gonna be a merge conflict
+
+im adding new stuff but my version is cooler
