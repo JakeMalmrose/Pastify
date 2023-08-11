@@ -1,7 +1,6 @@
 var mysql = require('mysql');
 const crypto = require('crypto');
 
-var saltString =""
 var hashedPasswordStirng = ""
 
 var connection = mysql.createConnection({
@@ -24,24 +23,81 @@ connection.connect();
     };
   }
 
-  
-  
-const originalPassword = 'myPassword123';
-hashPassword(originalPassword).then(({ salt, hashedPassword }) => {
-  console.log('Salt:', salt);
-  console.log('Hashed Password:', hashedPassword);
+  function generateEncryptionKey() {
+    return crypto.randomBytes(32); // 32 bytes for AES-256
+  }
 
-  const saltString = `('${salt}'`;
-  const hashedPasswordString = `,'${hashedPassword}')`;
+  function encryptData(data, key) {
+    const iv = crypto.randomBytes(16); // Initialization vector (IV) - 16 bytes
+    const cipher = crypto.createCipheriv('aes-256-cbc', Buffer.from(key), iv);
+  
+    let encryptedData = cipher.update(data, 'utf-8', 'hex');
+    encryptedData += cipher.final('hex');
+  
+    return {
+      iv: iv.toString('hex'),
+      encryptedData
+    };
+  }
+
+  function decryptData(encryptedData, key, iv) {
+    const decipher = crypto.createDecipheriv('aes-256-cbc', Buffer.from(key), Buffer.from(iv, 'hex'));
+  
+    let decryptedData = decipher.update(encryptedData, 'hex', 'utf-8');
+    decryptedData += decipher.final('utf-8');
+  
+    return decryptedData;
+  }
+
+  const encryptionKey = generateEncryptionKey();
+
+  const dataToEncryptUserName = 'username';
+  const dataToEncryptPassword = "password";
+
+  const encryptedUserName = encryptData(dataToEncryptUserName, encryptionKey);
+  console.log('Encrypted:', encryptedUserName);
+
+  const encryptedPassword = encryptData(dataToEncryptPassword, encryptionKey);
+  console.log('Encrypted:', encryptedPassword);
+
+  const decryptedUserName = decryptData(encryptedUserName.encryptedData, encryptionKey, encryptedUserName.iv);
+  console.log('Decrypted:', decryptedUserName);
+
+  const decryptedPassword = decryptData(encryptedPassword.encryptedData, encryptionKey, encryptedPassword.iv);
+  console.log('Decrypted:', decryptedPassword);
+
+
+  const saltString = `('${encryptedUserName}'`;
+  const hashedPasswordString = `,'${encryptedPassword}')`;
   const fullString = `insert into userdb.users(username, encrypted_password) values ${saltString}${hashedPasswordString}`;
   console.log(fullString);
 
   connection.query(fullString, function(error, results, fields) {
-    if (error) throw error;
-    console.log("Added user to the database.");
-  });
+        if (error) throw error;
+        console.log("Added user to the database.");
+      });
+
+
+  
+  
+// const originalPassword = 'myPassword123';
+// hashPassword(originalPassword).then(({ salt, hashedPassword }) => {
+//   console.log('Salt:', salt);
+//   console.log('Hashed Password:', hashedPassword);
+
+//   const saltString = `('${salt}'`;
+//   const hashedPasswordString = `,'${hashedPassword}')`;
+//   const fullString = `insert into userdb.users(username, encrypted_password) values ${saltString}${hashedPasswordString}`;
+//   console.log(fullString);
+
+//   connection.query(fullString, function(error, results, fields) {
+//     if (error) throw error;
+//     console.log("Added user to the database.");
+//   });
+
+//   const decipher = crypto.createDecipheriv(algorithm, Securitykey, initVector);
 
   connection.end();
-});
+//});
   
 
