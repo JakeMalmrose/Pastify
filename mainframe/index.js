@@ -25,7 +25,7 @@ const port = 3001
 // set up database connection
 const db = mysql.createConnection({
     host: 'localhost',
-    
+    //TODO: FINISH CONNECTION
 })
 
 // this is where we would use authentication middleware
@@ -46,5 +46,3 @@ app.use((error, req, res, next) => {
 app.listen(port, () => {
     console.log(`Mainframe listening at http://localhost:${port}`)
 })
-
-module.exports = app // not necessary, just for testing
