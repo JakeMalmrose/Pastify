@@ -1,5 +1,3 @@
-
-
 // Updated script.js
 function toggleForm() {
     const loginForm = document.querySelector('.form-box.login');
@@ -42,9 +40,17 @@ function doPasswordsMatch(password, confirmPassword) {
     return password === confirmPassword;
 }
 
-// sendDataToAPI function remains unchanged
+// sendDataToAPI function remains unchanged.
 async function sendDataToAPI(data) {
-    // Code remains unchanged
+    const response = await fetch('site here', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data),
+    });
+
+    return response.json();
 }
 
 // Update event listeners based on new form structure
