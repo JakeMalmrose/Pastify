@@ -26,7 +26,7 @@ const port = 3001
 const db = mysql.createConnection({
     host: 'localhost',
     password: 'student'
-    //TODO: FINISH CONNECTION
+    //This does nothing, as it's declared in the connection.js file
 })
 
 // this is where we would use authentication middleware
