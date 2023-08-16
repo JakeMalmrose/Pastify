@@ -1,6 +1,11 @@
 const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = require('../config/connection')
 
+class Song extends Model {
+    // add methods here
+}
+
+
 const Song = sequelize.define('song', {
     SongID: {
         type: DataTypes.INTEGER,
