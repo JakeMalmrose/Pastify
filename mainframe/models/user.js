@@ -1,8 +1,12 @@
 const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = require('../config/connection')
+const Model = Sequelize.Model;
 
 class User extends Model {
     // add methods here
+    checkPassword(loginPw) {
+        return compare(loginPw, this.Password);
+    }
 }
 
 User.init({
@@ -18,7 +22,11 @@ User.init({
     },
     Password: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: false,
+        set(value) {
+            const hashedPassword = value; // TODO: hash this
+            this.setDataValue('Password', hashedPassword);
+        }
     },
     Email: {
         type: DataTypes.STRING,
