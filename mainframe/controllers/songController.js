@@ -1,4 +1,4 @@
-const { Song } = require('../models');
+const { Song } = require('../models/song');
 
 const songController = {
     // required functions are create, read, update, delete
@@ -58,3 +58,5 @@ const songController = {
         }
     }
 }
+
+module.exports = songController;
