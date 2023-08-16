@@ -25,6 +25,7 @@ const port = 3001
 // set up database connection
 const db = mysql.createConnection({
     host: 'localhost',
+    password: 'student'
     //TODO: FINISH CONNECTION
 })
 
