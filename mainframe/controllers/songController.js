@@ -56,6 +56,14 @@ const songController = {
         } catch (err) {
             res.status(500).json(err);
         }
+    },
+    GetSongById: async (req, res) => {
+        try {
+            const song = await Song.findByPk(req.params.id);
+            res.status(200).json(song);
+        } catch (err) {
+            res.status(500).json(err);
+        }
     }
 }
 
