@@ -26,6 +26,8 @@ const userController = {
             } else {
                 res.status(401).json("Invalid credentials");
             }
+        } catch (err) {
+            res.status(500).json("Error authenticating user: " + err);
         }
     }
 }
