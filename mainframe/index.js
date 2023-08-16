@@ -7,11 +7,11 @@ const bodyParser = require('body-parser')
 
 // routes
 const userRoutes = require('./routes/user')
-const playlistRoutes = require('./routes/playlist')
+//const playlistRoutes = require('./routes/playlist')
 const songRoutes = require('./routes/song')
 
 // middleware
-const authentication = require('./middleware/authentication')
+//const authentication = require('./middleware/authentication')
 
 const app = express()
 
@@ -32,7 +32,7 @@ const db = mysql.createConnection({
 
 // set up routes
 app.use('/user', userRoutes)
-app.use('/playlist', playlistRoutes)
+//app.use('/playlist', playlistRoutes)
 app.use('/song', songRoutes)
 
 // handle errors on middleware
