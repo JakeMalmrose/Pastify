@@ -10,25 +10,25 @@ class User extends Model {
 }
 
 User.init({
-    UserID: {
+    id: {
         type: DataTypes.INTEGER,
         allowNull: false,
         primaryKey: true,
         autoIncrement: true
     },
-    Username: {
+    username: {
         type: DataTypes.STRING,
         allowNull: false
     },
-    Password: {
+    encrypted_password: {
         type: DataTypes.STRING,
         allowNull: false,
-        set(value) {
-            const hashedPassword = value; // TODO: hash this
-            this.setDataValue('Password', hashedPassword);
-        }
+        //set(value) {
+           // const hashedPassword = value; // TODO: hash this
+            //this.setDataValue('Password', hashedPassword);
+        //}
     },
-    Email: {
+    email: {
         type: DataTypes.STRING,
         allowNull: false
     }

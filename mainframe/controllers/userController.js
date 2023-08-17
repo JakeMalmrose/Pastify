@@ -4,9 +4,9 @@ const userController = {
     register: async (req, res) => {
         try {
             const user = await User.create({
-                Username: req.body['username'],
-                Password: req.body['password'],
-                Email: req.body['email']
+                username: req.body['username'],
+                encrypted_password: req.body['password'],
+                email: req.body['email']
             })
             res.status(200).json(user);
         } catch (err) {
@@ -17,8 +17,8 @@ const userController = {
         try {
             const user = await User.findOne({
                 where: {
-                    Username: req.body['username'],
-                    Password: req.body['password']
+                    username: req.body['username'],
+                    encrypted_password: req.body['password']
                 }
             })
             if (user) {

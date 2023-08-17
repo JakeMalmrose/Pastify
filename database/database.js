@@ -50,6 +50,7 @@ connection.connect();
   }
 
   const encryptionKey = generateEncryptionKey();
+  console.log(encryptionKey + "       this")
 
   const dataToEncryptUserName = 'username';
   const dataToEncryptPassword = "password";
@@ -78,26 +79,6 @@ connection.connect();
       });
 
 
-  
-  
-// const originalPassword = 'myPassword123';
-// hashPassword(originalPassword).then(({ salt, hashedPassword }) => {
-//   console.log('Salt:', salt);
-//   console.log('Hashed Password:', hashedPassword);
-
-//   const saltString = `('${salt}'`;
-//   const hashedPasswordString = `,'${hashedPassword}')`;
-//   const fullString = `insert into userdb.users(username, encrypted_password) values ${saltString}${hashedPasswordString}`;
-//   console.log(fullString);
-
-//   connection.query(fullString, function(error, results, fields) {
-//     if (error) throw error;
-//     console.log("Added user to the database.");
-//   });
-
-//   const decipher = crypto.createDecipheriv(algorithm, Securitykey, initVector);
-
   connection.end();
-//});
-  
+
 
