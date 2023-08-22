@@ -1,6 +1,7 @@
 const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = require('../config/connection')
 const Model = Sequelize.Model;
+const encryptionUtils = require('../../database/databasePasswordEncryption.js');
 
 class User extends Model {
     // add methods here
@@ -23,10 +24,10 @@ User.init({
     encrypted_password: {
         type: DataTypes.STRING,
         allowNull: false,
-        //set(value) {
-           // const hashedPassword = value; // TODO: hash this
-            //this.setDataValue('Password', hashedPassword);
-        //}
+        set(value) {
+            const hashedPassword = encryptionUtils.encryptData(value);
+            this.setDataValue('encrypted_password', hashedPassword);
+        }
     },
     email: {
         type: DataTypes.STRING,
