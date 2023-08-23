@@ -24,7 +24,7 @@ function encryptData(data, key) {
 
   return {
     iv: iv.toString('hex'),
-    encryptedData
+    hashedPassword: encryptedData
   };
 }
 
