@@ -33,10 +33,9 @@ User.init({
         type: DataTypes.STRING,
         allowNull: false,
         set(value) {
-            key = encryptionUtils.generateKey();
+            key = encryptionUtils.generateKey(value);
             const { iv, hashedPassword } = encryptionUtils.encryptData(value, key);
             this.setDataValue('encrypted_password', hashedPassword);
-            this.setDataValue('key', key);
             this.setDataValue('iv', iv);
         }
     },
