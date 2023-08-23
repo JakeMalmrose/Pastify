@@ -21,12 +21,23 @@ User.init({
         type: DataTypes.STRING,
         allowNull: false
     },
+    key: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    iv: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
     encrypted_password: {
         type: DataTypes.STRING,
         allowNull: false,
         set(value) {
-            const hashedPassword = encryptionUtils.encryptData(value);
+            key = encryptionUtils.generateKey();
+            const { iv, hashedPassword } = encryptionUtils.encryptData(value, key);
             this.setDataValue('encrypted_password', hashedPassword);
+            this.setDataValue('key', key);
+            this.setDataValue('iv', iv);
         }
     },
     email: {
