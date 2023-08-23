@@ -21,10 +21,6 @@ User.init({
         type: DataTypes.STRING,
         allowNull: false
     },
-    key: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
     iv: {
         type: DataTypes.STRING,
         allowNull: false
