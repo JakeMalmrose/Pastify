@@ -1,4 +1,4 @@
-const { Song } = require('../models/song');
+const Song = require('../models/song');
 
 const songController = {
     // required functions are create, read, update, delete
@@ -8,7 +8,7 @@ const songController = {
             const song = await Song.create({
                 Title: req.body.title,
                 Artist: req.body.artist,
-                URL: req.body.URL,
+                URL: req.body.url,
             })
             res.status(200).json(song);
         } catch (err) {
@@ -57,10 +57,15 @@ const songController = {
             res.status(500).json(err);
         }
     },
-    GetSongById: async (req, res) => {
+    getSongById: async (req, res) => {
         try {
+            console.log(req.params.id)
             const song = await Song.findByPk(req.params.id);
-            res.status(200).json(song);
+            if (!song) {
+                res.status(404).json("Song not found");
+            } else {
+                res.status(200).json(song);
+            }
         } catch (err) {
             res.status(500).json(err);
         }

@@ -7,7 +7,7 @@ class Song extends Model {
 }
 
 
-Song = sequelize.define('song', {
+Song.init({
     SongID: {
         type: DataTypes.INTEGER,
         allowNull: false,
@@ -20,15 +20,17 @@ Song = sequelize.define('song', {
     },
     Artist: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: true
     },
     URL: {
         type: DataTypes.STRING,
         allowNull: false
     },
     }, {
+        sequelize,
         tableName: 'songs',
-        timestamps: false
+        timestamps: false,
+        modelName: 'Song'
     })
 
 module.exports = Song;
