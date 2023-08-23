@@ -10,8 +10,9 @@ const connection = mysql.createConnection({
 
 connection.connect();
 
-function generateEncryptionKey() {
-  return crypto.randomBytes(32);
+function generateEncryptionKey(password) {
+  // generate a key based off the passed in password
+  return crypto.scryptSync(password, 'salt', 32);
 }
 
 function encryptData(data, key) {
