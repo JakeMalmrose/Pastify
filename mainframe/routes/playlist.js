@@ -3,18 +3,18 @@ const router = express.Router()
 
 const playlistController = require('../controllers/playlistController')
 
-router.get('/', playlistController.getAllPlaylistsForUser)
+router.get('/', playlistController.getAllPlaylistsForUser) // get all playlists for a user
 
-router.get('/:id', playlistController.read)
+router.put('/addSong/:id/', playlistController.addSongToPlaylist) // add a song to a playlist
 
-router.post('/', playlistController.create)
+router.put('/removeSong/:id/', playlistController.removeSongFromPlaylist) // remove a song from a playlist
 
-router.put('/:id', playlistController.update)
+router.get('/:id', playlistController.read) // get 1 playlist by id
 
-router.put('/:id/addSong', playlistController.addSongToPlaylist) 
+router.post('/', playlistController.create) // create a new playlist
 
-router.put('/:id/removeSong', playlistController.removeSongFromPlaylist)
+router.put('/:id', playlistController.update) // update a playlist
 
-router.delete('/:id', playlistController.delete)
+router.delete('/:id', playlistController.delete) // delete a playlist
 
 module.exports = router
