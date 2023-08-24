@@ -9,6 +9,7 @@ const bodyParser = require('body-parser')
 const userRoutes = require('./routes/user')
 const playlistRoutes = require('./routes/playlist')
 const songRoutes = require('./routes/song')
+const ytapiRoutes = require('./routes/yt_api')
 
 // middleware
 //const authentication = require('./middleware/authentication')
@@ -35,6 +36,7 @@ const db = mysql.createConnection({
 app.use('/user', userRoutes)
 app.use('/playlist', playlistRoutes)
 app.use('/song', songRoutes)
+app.use('/ytapi', ytapiRoutes)
 
 // handle errors on middleware
 app.use((error, req, res, next) => {

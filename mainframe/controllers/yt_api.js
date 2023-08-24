@@ -3,20 +3,17 @@ const YTMusic = require("ytmusic-api").default
 //test code used for the ytAPi that will search for songs 
 const ytmusic = new YTMusic()
 const ytMusicFunction = {
-    getSongUrl: async (req, res) =>{
-        ytmusic.initialize().then(() => {
-        ytmusic.searchSongs(req.body['artistname']).then(res => {
-            let resString = res[0].videoId
-
-            console.log(resString)
-            
-            const stringWithoutSpaces = ("youtube.com/watch?v=" + resString.replace(/\s+/g, ''));
-            
-            console.log(stringWithoutSpaces)
-            })
-        })
-        res.status(200).json(stringWithoutSpaces)
+    getSongUrl: async (req, res) => {
+    try {
+        await ytmusic.initialize();
+        const searchResult = await ytmusic.searchSongs(req.body.artistname);
+        const videoId = searchResult[0].videoId;
+        const stringWithoutSpaces = "youtube.com/watch?v=" + videoId.replace(/\s+/g, '');
+        res.status(200).json({ "url": stringWithoutSpaces });
+        } catch (error) {
+        res.status(500).json({ "error": 'An error occurred' });
+        }
     }
-}
-
+    };
+    
 module.exports = ytMusicFunction
