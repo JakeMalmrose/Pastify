@@ -47,7 +47,7 @@ const playlistController = {
         try {
             const playlists = await Playlist.findAll({
                 where: {
-                    user_id: req.params.id
+                    user: req.body['user_id']
                 }
             });
             res.status(200).json(playlists);
@@ -67,7 +67,7 @@ const playlistController = {
     removeSongFromPlaylist: async (req, res) => {
         try {
             const playlist = await Playlist.findByPk(req.params.id);
-            playlist.removeSong(req.body.song_id);
+            playlist.removeSong(req.body['song']);
             res.status(200).json(playlist);
         } catch (err) {
             res.status(500).json("Error removing song from playlist: " + err);
