@@ -4,6 +4,18 @@ const User = require('../models/user');
 const userController = {
     register: async (req, res) => {
         try {
+
+            const existingUser = await User.findOne({
+                where: {
+                    username: req.body['username']
+                }
+            });
+            
+            if (existingUser) {
+                res.status(409).json("Username already exists");
+                return;
+            }
+
             const user = await User.create({
                 username: req.body['username'],
                 encrypted_password: req.body['password'],
