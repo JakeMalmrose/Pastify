@@ -1,6 +1,8 @@
 const mysql = require('mysql');
 const crypto = require('crypto');
 
+
+//creates a connection to mysql
 const connection = mysql.createConnection({
   host: 'localhost',
   user: 'root',
@@ -10,11 +12,14 @@ const connection = mysql.createConnection({
 
 connection.connect();
 
+
+//creates an encryption key to keep password data safe
 function generateEncryptionKey(password) {
   return crypto.scryptSync(password, 'salt', 32);
 }
 
 
+//encrypts the data using the parameters data being password and key being the hash key
 function encryptData(data, key) {
   const iv = crypto.randomBytes(16);
   const cipher = crypto.createCipheriv('aes-256-cbc', Buffer.from(key), iv);
@@ -28,6 +33,8 @@ function encryptData(data, key) {
   };
 }
 
+
+//decryptes the data for log in authentication
 function decryptData(encryptedData, key, iv) {
   const decipher = crypto.createDecipheriv('aes-256-cbc', Buffer.from(key), Buffer.from(iv, 'hex'));
 
@@ -37,6 +44,7 @@ function decryptData(encryptedData, key, iv) {
   return decryptedData;
 }
 
+//funciton to add user to the database after encrypting
 function addUserToDatabase(username, password) {
   const encryptionKey = generateEncryptionKey();
 
@@ -67,6 +75,8 @@ function addUserToDatabase(username, password) {
 
 connection.end();
 
+
+//this is used to export funcitons to be used in other files
 module.exports = {
   generateKey: generateEncryptionKey,
   encryptData: encryptData,

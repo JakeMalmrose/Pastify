@@ -1,10 +1,12 @@
 const databasePasswordEncryption = require('../../database/databasePasswordEncryption');
 const User = require('../models/user');
 
+
+//instantiates the controller and the funcitons used
 const userController = {
     register: async (req, res) => {
+        //the try statement sees if the information is valid then if it is adds to the database
         try {
-
             const existingUser = await User.findOne({
                 where: {
                     username: req.body['username']
@@ -26,6 +28,7 @@ const userController = {
             res.status(500).json("Error registering user: " + err);
         }
     },
+    //authenticate checks the users password and if correct allows log in
     authenticate: async (req, res) => {
         try {
             console.log(req.body['password'])

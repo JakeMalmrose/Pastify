@@ -1,5 +1,7 @@
 const YTMusic = require("ytmusic-api").default
 
+
+//test code used for the ytAPi that will search for songs 
 const ytmusic = new YTMusic()
 ytmusic.initialize().then(() => {
 	ytmusic.searchSongs("Yung Gravy").then(res => {

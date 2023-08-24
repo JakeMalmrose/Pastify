@@ -3,6 +3,7 @@
 const Playlist = require('../models/playlist');
 
 const playlistController = {
+    //create a new playlist
     create: async (req, res) => {
         try {
             const playlist = await Playlist.create({
@@ -14,6 +15,7 @@ const playlistController = {
             res.status(500).json("Error creating playlist: " + err);
         }
     },
+    //read the playlist
     read: async (req, res) => {
         try {
             const playlist = await Playlist.findByPk(req.params.id);
@@ -22,6 +24,7 @@ const playlistController = {
             res.status(500).json("Error reading playlist: " + err);
         }
     },
+    //update the playlist by id
     update: async (req, res) => {
         try {
             const playlist = await Playlist.findByPk(req.params.id);
@@ -34,6 +37,7 @@ const playlistController = {
             res.status(500).json("Error updating playlist: " + err);
         }
     },
+    //delete the playlist by id
     delete: async (req, res) => {
         try {
             const playlist = await Playlist.findByPk(req.params.id);
@@ -43,6 +47,7 @@ const playlistController = {
             res.status(500).json("Error deleting playlist: " + err);
         }
     },
+    //get all playlists for a user
     getAllPlaylistsForUser: async (req, res) => {
         try {
             const playlists = await Playlist.findAll({
@@ -55,6 +60,7 @@ const playlistController = {
             res.status(500).json("Error getting playlists: " + err);
         }
     },
+    //add a song to a playlist
     addSongToPlaylist: async (req, res) => {
         try {
             const playlist = await Playlist.findByPk(req.params.id);
@@ -64,6 +70,7 @@ const playlistController = {
             res.status(500).json("Error adding song to playlist: " + err);
         }
     },
+    //remove a song from a playlist
     removeSongFromPlaylist: async (req, res) => {
         try {
             const playlist = await Playlist.findByPk(req.params.id);
