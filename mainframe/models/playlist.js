@@ -35,9 +35,14 @@ Playlist.init({
 
 
 
-PlaylistSong = sequelize.define('playlists_song', {});
+PlaylistSong = sequelize.define('playlists_song', {},
+    {
+        timestamps: false,
+        tableName: 'playlists_songs',
+        modelName: 'PlaylistSong'
+    });
     
-Playlist.belongsToMany(Song, { through: PlaylistSong, allowNull: true });
-Song.belongsToMany(Playlist, { through: PlaylistSong, allowNull: true });
+Playlist.belongsToMany(Song, { through: PlaylistSong, foreignKey: 'playlistid', allowNull: true });
+Song.belongsToMany(Playlist, { through: PlaylistSong, foreignKey: 'songid', allowNull: true });
 
 module.exports = Playlist;
