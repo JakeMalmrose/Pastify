@@ -1,35 +1,43 @@
 const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = require('../config/connection')
 const Model = Sequelize.Model;
+const Song = require('./song');
 
 class Playlist extends Model {
     // add methods here
 }
 
+class PlaylistSong extends Model {
+    // add methods here
+}
 
-Song = sequelize.define('song', {
-    SongID: {
+Playlist.init({
+    playlistid: {
         type: DataTypes.INTEGER,
         allowNull: false,
         primaryKey: true,
         autoIncrement: true
     },
-    Title: {
+    name: {
         type: DataTypes.STRING,
         allowNull: false
     },
-    Artist: {
-        type: DataTypes.STRING,
+    user: {
+        type: DataTypes.INTEGER,
         allowNull: false
-    },
-    URL: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
+    }
     }, {
-        tableName: 'songs',
-        timestamps: false
+        sequelize,
+        tableName: 'playlists',
+        timestamps: false,
+        modelName: 'Playlist'
     })
 
-module.exports = Song;
 
+
+PlaylistSong = sequelize.define('playlists_song', {});
+    
+Playlist.belongsToMany(Song, { through: PlaylistSong, allowNull: true });
+Song.belongsToMany(Playlist, { through: PlaylistSong, allowNull: true });
+
+module.exports = Playlist;
