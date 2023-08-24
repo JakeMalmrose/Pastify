@@ -30,6 +30,7 @@ User.init({
         allowNull: false,
         set(value) {
             key = encryptionUtils.generateKey(value);
+            
             const { iv, hashedPassword } = encryptionUtils.encryptData(value, key);
             this.setDataValue('encrypted_password', hashedPassword);
             this.setDataValue('iv', iv);

@@ -1,3 +1,4 @@
+const databasePasswordEncryption = require('../../database/databasePasswordEncryption');
 const User = require('../models/user');
 
 const userController = {
@@ -15,14 +16,28 @@ const userController = {
     },
     authenticate: async (req, res) => {
         try {
+            console.log(req.body['password'])
+            const inputPassword = req.body['password'];
+            
             const user = await User.findOne({
                 where: {
-                    username: req.body['username'],
-                    encrypted_password: req.body['password']
+                    username: req.body['username']
                 }
             })
             if (user) {
+                let passKey = databasePasswordEncryption.generateKey(inputPassword);
+
+                const decryptedPassword = databasePasswordEncryption.decryptData(
+                    user.encrypted_password,
+                    passKey,
+                    user.iv
+                );
+
+                const passwordMatches = inputPassword === decryptedPassword;
+
+                if(passwordMatches){
                 res.status(200).json(user);
+                }
             } else {
                 res.status(401).json("Invalid credentials");
             }
