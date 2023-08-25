@@ -52,7 +52,7 @@ const playlistController = {
         try {
             const playlists = await Playlist.findAll({
                 where: {
-                    user: req.params.id
+                    user: req.body['user_id']
                 }
             });
             res.status(200).json(playlists);
