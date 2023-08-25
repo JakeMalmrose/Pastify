@@ -2,6 +2,7 @@
 
 // lots of imports
 const express = require ('express')
+const cors = require('cors')
 const mysql = require('mysql')
 const bodyParser = require('body-parser')
 
@@ -15,6 +16,8 @@ const ytapiRoutes = require('./routes/yt_api')
 //const authentication = require('./middleware/authentication')
 
 const app = express()
+app.use(cors());
+
 
 // use middlewares
 app.use(bodyParser.json())
