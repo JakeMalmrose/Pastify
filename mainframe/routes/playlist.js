@@ -3,7 +3,7 @@ const router = express.Router()
 
 const playlistController = require('../controllers/playlistController')
 
-router.get('/', playlistController.getAllPlaylistsForUser) // get all playlists for a user
+router.get('/:id', playlistController.getAllPlaylistsForUser) // get all playlists for a user
 
 router.put('/addSong/:id/', playlistController.addSongToPlaylist) // add a song to a playlist
 
