@@ -1,5 +1,7 @@
 const YTMusic = require("ytmusic-api").default
 
+let songs = [];
+
 const ytmusic = new YTMusic()
 const ytMusicFunction = {
     // this searches for an artist that was given by the user then gets the artist id then searches for all their songs then returns
@@ -8,13 +10,31 @@ const ytMusicFunction = {
                 await ytmusic.initialize();
                 const artistID = await ytmusic.searchArtists(req.body.artistname)
                 const searchResult = await ytmusic.getArtistSongs(artistID[0].artistId);
-                let songList = {};
-                for (let i = 0; i < searchResult.length; ++i) {
-                    const videoId = searchResult[i].videoId;
-                    const stringWithoutSpaces = "youtube.com/watch?v=" + videoId.replace(/\s+/g, '');
-                    songList[searchResult[i].name] = stringWithoutSpaces;
+                if(searchResult.length > 5){
+                    for(let i = 0; i < 5; i++){
+                        const videoId = searchResult[i].videoId;
+                        //const stringWithoutSpaces = "youtube.com/watch?v=" + videoId.replace(/\s+/g, '');
+                        let jsonObj = {
+                            "songName": searchResult[i].name,
+                            "url": videoId,
+                            "artistName":  artistID[0].name
+                        }
+                        songs.push(jsonObj);
+                    }
+                }else{
+                    for (let i = 0; i < searchResult.length; ++i) {
+                        const videoId = searchResult[i].videoId;
+                        //const stringWithoutSpaces = "youtube.com/watch?v=" + videoId.replace(/\s+/g, '');
+                        let jsonObj = {
+                            "songName": searchResult[i].name,
+                            "url": videoId,
+                            "artistName":  artistID[0].name
+                        }
+                        songs.push(jsonObj);
+                        
+                    }
                 }
-                return res.status(200).json(songList);
+                return res.status(200).json(songs);
             } catch (error) {
                 res.status(500).json({ "error": 'An error occurred' });
             }
