@@ -11,7 +11,7 @@ router.put('/removeSong/:id/', playlistController.removeSongFromPlaylist) // rem
 
 router.get('/:id', playlistController.read) // get 1 playlist by id
 
-router.post('/', playlistController.create) // create a new playlist
+router.post('/create', playlistController.create) // create a new playlist
 
 router.put('/:id', playlistController.update) // update a playlist
 
