@@ -1,3 +1,5 @@
+const { ArtistBasic } = require("ytmusic-api");
+
 const YTMusic = require("ytmusic-api").default
 
 let songs = [];
@@ -44,9 +46,31 @@ const ytMusicFunction = {
         try {
             await ytmusic.initialize();
             const searchResult = await ytmusic.searchSongs(req.body.songname);
-            const videoId = searchResult[0].videoId;
-            const stringWithoutSpaces = "youtube.com/watch?v=" + videoId.replace(/\s+/g, '');
-            res.status(200).json({ "url": stringWithoutSpaces });
+            if(searchResult.length > 5){
+                for(let i = 0; i < 5; i++){
+                    const videoId = searchResult[i].videoId;
+                    //const stringWithoutSpaces = "youtube.com/watch?v=" + videoId.replace(/\s+/g, '');
+                    let jsonObj = {
+                        "songName": searchResult[i].name,
+                        "url": videoId,
+                        "artistName":  searchResult[i].artists[0].name
+                    }
+                    songs.push(jsonObj);
+                }
+            }else{
+                for (let i = 0; i < searchResult.length; ++i) {
+                    const videoId = searchResult[i].videoId;
+                    //const stringWithoutSpaces = "youtube.com/watch?v=" + videoId.replace(/\s+/g, '');
+                    let jsonObj = {
+                        "songName": searchResult[i].name,
+                        "url": videoId,
+                        "artistName":  ArtistBasic[0].name
+                    }
+                    songs.push(jsonObj);
+                    
+                }
+            }
+            return res.status(200).json(songs);
             } catch (error) {
             res.status(500).json({ "error": 'An error occurred' });
             }
