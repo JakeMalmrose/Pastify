@@ -2,12 +2,11 @@ const { ArtistBasic } = require("ytmusic-api");
 
 const YTMusic = require("ytmusic-api").default
 
-let songs = [];
-
 const ytmusic = new YTMusic()
 const ytMusicFunction = {
     // this searches for an artist that was given by the user then gets the artist id then searches for all their songs then returns
     getSongsByArtist: async (req, res) => {
+        let songs = [];
             try {
                 await ytmusic.initialize();
                 const artistID = await ytmusic.searchArtists(req.body.artistname)
@@ -43,6 +42,7 @@ const ytMusicFunction = {
     },
     //this is to search for a specific song
     getSongByName: async (req, res) =>{
+        let songs = [];
         try {
             await ytmusic.initialize();
             const searchResult = await ytmusic.searchSongs(req.body.songname);
