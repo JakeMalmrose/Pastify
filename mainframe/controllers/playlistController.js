@@ -79,6 +79,16 @@ const playlistController = {
         } catch (err) {
             res.status(500).json("Error removing song from playlist: " + err);
         }
+    },
+    //get all songs in a playlist by id
+    getSongsInPlaylist: async (req, res) => {
+        try {
+            const playlist = await Playlist.findByPk(req.params.id);
+            const songs = await playlist.getSongs();
+            res.status(200).json(songs);
+        } catch (err) {
+            res.status(500).json("Error getting songs in playlist: " + err);
+        }
     }
 }
 

@@ -24,6 +24,24 @@ const songController = {
             res.status(500).json(err);
         }
     },
+    // get a song by url
+    getSongByUrl: async (req, res) => {
+        try {
+            const song = await Song.findOne({
+                where: {
+                    URL: req.params.url
+                }
+            });
+            if (!song) {
+                res.status(404).json("Song not found");
+            } else {
+                res.status(200).json(song);
+            }
+        } catch (err) {
+            res.status(500).json(err);
+        }
+    },
+    
     // update a song
     updateSong: async (req, res) => {
         try {
