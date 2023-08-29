@@ -1,25 +1,18 @@
 <script>
-    import { Progress } from '$lib/components/ui/progress';
-    import { onDestroy, onMount } from 'svelte';
-    import { goto } from '$app/navigation';
+    import {onDestroy, onMount} from 'svelte';
+    import {goto} from '$app/navigation';
     import IconifyIcon from '@iconify/svelte'; // make sure to install and setup @iconify/svelte
-    import { Separator } from '$lib/components/ui/separator';
-    import { Terminal } from 'lucide-svelte';
-    import { fly } from 'svelte/transition';
-    import { Button } from '$lib/components/ui/button';
-    import { Input } from '$lib/components/ui/input';
-    import { Label } from '$lib/components/ui/label';
-    import * as Card from "$lib/components/ui/card";
-    import * as Alert from "$lib/components/ui/alert";
-    import * as Tabs from "$lib/components/ui/tabs";
-    import * as Table from "$lib/components/ui/table";
-    import {
-        Popover,
-        PopoverTrigger,
-        PopoverContent
-    } from "$lib/components/ui/popover";
-    import alert from '$lib/components/ui/alert/alert.svelte';
-
+    import {Separator} from '$lib/components/ui/separator';
+    import {Terminal} from 'lucide-svelte';
+    import {fly} from 'svelte/transition';
+    import {Button} from '$lib/components/ui/button';
+    import {Input} from '$lib/components/ui/input';
+    import {Label} from '$lib/components/ui/label';
+    import {Popover, PopoverContent, PopoverTrigger} from "$lib/components/ui/popover";
+    import * as Card from '$lib/components/ui/card';
+    import * as Alert from '$lib/components/ui/alert';
+    import * as Tabs from '$lib/components/ui/tabs';
+    import * as Table from '$lib/components/ui/table';
 
 
     let trackTitle = "Nothing Playing";
@@ -32,13 +25,13 @@
     let youtubeVideoID; // Extracted from the link you provided
     let alertMessage = null;
     let playlists = [];
-    let playlistName
+    let playlistResults = [];
     let createPlaylist = "";
-    let userId = "1";
     let activePlaylist = [];
     let searchSongField = '';
     let searchResults = [];
     let currentSongIndex = -1; // -1 indicates no song is currently selected
+    let userId;
 
 
 
@@ -60,12 +53,6 @@
             label: "Nuxt.js"
         }
     ];
-
-    function validUser(){
-        if (localStorage.getItem('user') == null){
-            goto('/login');
-        }
-    }
 
     function nextTrack() {
         clearProgress();
@@ -91,6 +78,7 @@
     function setActivePlaylist(playlist) {
         activePlaylist =[];
         activePlaylist = playlist;
+        getAllSongsInPlaylist(playlist.playlistid);
     }
 
 
@@ -110,7 +98,9 @@
 
 
     onMount(() => {
-        //validUser();
+        userId = sessionStorage.getItem('userID');
+        validUser();
+        1000;
         // Load the YouTube IFrame Player API
         const tag = document.createElement('script');
         tag.src = "https://www.youtube.com/iframe_api";
@@ -152,6 +142,14 @@
     });
 
 
+    function validUser(){
+        if (sessionStorage.getItem('userID') == null){
+            goto('/login');
+            userId = sessionStorage.getItem('userID');
+        }
+        console.log(userId);
+    }
+
     async function clearProgress(){
         clearInterval(intervalID);
     }
@@ -192,7 +190,6 @@
 
     async function getPlaylists() {
         try {
-            //const userId = sessionStorage.getItem('user');
             const response = await fetch("http://localhost:3001/playlist", {
                 method: 'POST',
                 headers: {
@@ -237,7 +234,7 @@
     }
 
     async function sendSongQuery() {
-         //clear the search results before searching again
+        //clear the search results before searching again
         searchResults = [];
         try {
             const response = await fetch('http://localhost:3001/ytapi/getSongByName', {
@@ -276,32 +273,140 @@
         currentSongIndex = searchResults.findIndex(s => s.songName === song.songName && s.artistName === song.artistName);
     }
 
+    function selectSongv2(song) {
+        trackTitle = song.Title;
+        author = song.Artist;
 
-    function addSongToPlaylist(){
+        if (player && typeof player.loadVideoById === 'function') {
+            player.loadVideoById(song.URL);
+        } else {
+            youtubeVideoID = song.URL;  // fallback in case the player isn't initialized yet
+        }
 
-    }
-
-    function removeSongFromPlaylist(){
-
-    }
-
-    function addSongToSongsDatabase(){
-
-    }
-
-    function checkForSongInDatabaseByURL(){
-
-    }
-
-    function getAllSongsInPlaylist(){
-
+        currentSongIndex = searchResults.findIndex(s => s.Title === song.Title && s.Artist === song.Artist);
     }
 
 
+    async function addSongToPlaylist(songID) {  // Default userID is set to 1
+        try {
+            const response = await fetch(`http://localhost:3001/playlist/addSong/${activePlaylist.playlistid}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    song: songID.toString()
+                })
+            });
+
+            if (response.status !== 200) {
+                console.error('Error adding song to playlist:', await response.text());
+            }
+        } catch (error) {
+            console.error('Error while making the API call:', error);
+        }
+    }
 
 
+    async function removeSongFromPlaylist(songID) {
+        try {
+            const response = await fetch(`http://localhost:3001/playlist/removeSong/${activePlaylist.playlistid}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    song: songID.toString()
+                })
+            });
+
+            if (!response.ok) {
+                console.error('Error removing song from playlist:', await response.text());
+            } else {
+                // Ideally, update the playlistResults here or refetch the playlist songs
+                getAllSongsInPlaylist(activePlaylist.playlistid);
+            }
+        } catch (error) {
+            console.error('Error while making the API call:', error);
+        }
+    }
+
+    async function addSongToSongsDatabase(song) {
+        try {
+            const response = await fetch('http://localhost:3001/song', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    title: song.title,
+                    artist: song.artist,
+                    url: song.url
+                })
+            });
+
+            if (response.status !== 200) {
+                console.error('Error adding song to database:', await response.text());
+            }
+        } catch (error) {
+            console.error('Error while making the API call:', error);
+        }
+
+    }
 
 
+    async function checkForSongInDatabaseByURL(songurl) {
+        try {
+            const response = await fetch('http://localhost:3001/song/getSongByUrl', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    url: songurl
+                })
+            });
+
+            if (response.status === 200) {
+                const data = await response.json();
+                return data.SongID;
+            } else if (response.status === 404) {
+                return 0;
+            } else {
+                console.error('Unexpected response status:', response.status);
+                return null;
+            }
+        } catch (error) {
+            console.error('Error fetching song:', error);
+            return null;
+        }
+    }
+
+
+    async function getAllSongsInPlaylist(playlistID) {
+        try {
+            const response = await fetch(`http://localhost:3001/playlist/getSongs/${playlistID}`, {
+                method: 'PUT'
+            });
+
+            if (response.status === 200) {
+                playlistResults = await response.json();
+            } else {
+                console.error('Error retrieving songs from playlist:', await response.text());
+            }
+        } catch (error) {
+            console.error('Error while making the API call:', error);
+        }
+    }
+
+    async function addSong(playlistID, song) {
+        const songID = await checkForSongInDatabaseByURL(song.url);
+        if (songID === 0) {
+            addSongToSongsDatabase(song);
+        } else if (songID !== null) {
+            addSongToPlaylist(songID);
+        }
+    }
 </script>
 
 <div class="Audio_Player">
@@ -348,14 +453,14 @@
         </Card.Footer>
     </Card.Root>
     <iframe
-      title='YouTube Player'
-      id="youtubePlayer"
-      width="0"
-      height="0"
-      src={`https://www.youtube.com/embed/${youtubeVideoID}?enablejsapi=1`}
-      frameborder="0"
-      allow="autoplay; encrypted-media"
-      allowfullscreen>
+            title='YouTube Player'
+            id="youtubePlayer"
+            width="0"
+            height="0"
+            src={`https://www.youtube.com/embed/${youtubeVideoID}?enablejsapi=1`}
+            frameborder="0"
+            allow="autoplay; encrypted-media"
+            allowfullscreen>
     </iframe>
 </div>
 
@@ -394,22 +499,28 @@
                     </Card.Description>
                 </Card.Header>
                 <Card.Content class="space-y-2">
-                    {#if searchResults.length}
+                    {#if playlistResults.length}
                         <Table.Root class="w-full">
                             <Table.Header>
                                 <Table.Row>
                                     <Table.Head class='text-left'>Song Name</Table.Head>
                                     <Table.Head class='text-center'>Artist</Table.Head>
                                     <Table.Head class='text-right'>Play</Table.Head>
+                                    <Table.Head class='text-right'>Remove from Playlist</Table.Head>
                                 </Table.Row>
                             </Table.Header>
                             <Table.Body>
-                                {#each searchResults as song}
+                                {#each playlistResults as song}
                                     <Table.Row class="cursor-pointer hover:bg-gray-200">
-                                        <Table.Cell class='text-left'>{song.songName}</Table.Cell>
-                                        <Table.Cell class='text-center'>{song.artistName}</Table.Cell>
+                                        <Table.Cell class='text-left'>{song.Title}</Table.Cell>
+                                        <Table.Cell class='text-center'>{song.Artist}</Table.Cell>
                                         <Table.Cell class='text-right'>
-                                            <button on:click={() => selectSong(song)}><IconifyIcon icon="mdi:play-box" /></button>
+                                            <button on:click={() => selectSongv2(song)}><IconifyIcon icon="mdi:play-box" /></button>
+                                        </Table.Cell>
+                                        <Table.Cell class='text-right'>
+                                            <Button on:click={() => removeSongFromPlaylist(song.SongID)}>
+                                                Remove from Playlist
+                                            </Button>
                                         </Table.Cell>
                                     </Table.Row>
                                 {/each}
@@ -440,6 +551,7 @@
                                     <Table.Head class='text-left'>Song Name</Table.Head>
                                     <Table.Head class='text-center'>Artist</Table.Head>
                                     <Table.Head class='text-right'>Play</Table.Head>
+                                    <Table.Head class='text-right'>Add to Active Playlist</Table.Head>
                                 </Table.Row>
                             </Table.Header>
                             <Table.Body>
@@ -450,10 +562,18 @@
                                         <Table.Cell class='text-right'>
                                             <button on:click={() => selectSong(song)}><IconifyIcon icon="mdi:play-box" /></button>
                                         </Table.Cell>
+                                        <Table.Cell class='text-right'>
+                                            <Button on:click={() => {
+                        if (activePlaylist && activePlaylist.playlistid) {
+                            addSong(activePlaylist.playlistid, song);
+                        } else {
+                            alertMessage = 'Please select a playlist first!';
+                        }
+                    }}>Add to Playlist</Button>
+                                        </Table.Cell>
                                     </Table.Row>
                                 {/each}
                             </Table.Body>
-
                         </Table.Root>
                     {/if}
                 </Card.Content>
@@ -490,7 +610,7 @@
                         <Table.Cell class="text-center">{playlist.name}</Table.Cell>
                         <Table.Cell class='text-right'>
                             <Button on:click={() => setActivePlaylist(playlist)}>
-                               Select
+                                Select
                             </Button>
                         </Table.Cell>
                     </Table.Row>

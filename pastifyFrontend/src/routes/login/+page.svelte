@@ -44,12 +44,12 @@
         });
     });
 
-     const cancel = () => {
+    const cancel = () => {
         goto('/');
     };
 
 
-     async function validateLogin() {
+    async function validateLogin() {
         login()
     }
 
@@ -65,28 +65,28 @@
                 password: password,
             })
         })
-          .then((res) => {
-              return res.json();
-          })
-          .then((data) => {
-              console.log(data);
-              if (data.error === true) throw new Error(data.message);
+            .then((res) => {
+                return res.json();
+            })
+            .then((data) => {
+                console.log(data);
+                if (data.error === true) throw new Error(data.message);
+                // Save the user ID in sessionStorage using the 'id' value from the response data
+                sessionStorage.setItem('userID', data.id.toString());
 
-              // Save the user ID in sessionStorage
-              sessionStorage.setItem('userID', data.id.toString());
-
-              return true;  // Return a value to indicate success
-          })
-          .then(async (success) => {
-              if (success) {
-                  await goto('/', {noScroll: false, replaceState: true});
-              }
-          })
-          .catch((error) => {
-              currentError = error;
-              console.log("Error logging in", error);
-          });
+                return true;  // Return a value to indicate success
+            })
+            .then(async (success) => {
+                if (success) {
+                    await goto('../afterAuthLogin', {noScroll: false, replaceState: true});
+                }
+            })
+            .catch((error) => {
+                currentError = error;
+                console.log("Error logging in", error);
+            });
     }
+
 </script>
 
 <div class="flex justify-center items-center min-h-screen">
