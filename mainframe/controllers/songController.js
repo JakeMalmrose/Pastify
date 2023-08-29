@@ -29,7 +29,7 @@ const songController = {
         try {
             const song = await Song.findOne({
                 where: {
-                    URL: req.params.url
+                    URL: req.body.url
                 }
             });
             if (!song) {
@@ -41,7 +41,6 @@ const songController = {
             res.status(500).json(err);
         }
     },
-    
     // update a song
     updateSong: async (req, res) => {
         try {
