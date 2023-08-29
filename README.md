@@ -1,6 +1,6 @@
 # Pastify
 Definitely not spotify, or even close to it
-## -------------------------------------------------
+
 ## Description
 Pastify is a full stack web application built on the following technologies:
 - Node.js
