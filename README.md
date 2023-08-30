@@ -17,7 +17,6 @@ Pastify is a full stack web application built on the following technologies:
 - User profiles
 - User playlists
 - User playlist creation
-- User playlist deletion
 - User playlist editing
 - Music search
 - Music playback media controls
