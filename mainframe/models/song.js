@@ -2,10 +2,7 @@ const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = require('../config/connection')
 const Model = Sequelize.Model;
 
-class Song extends Model {
-    // add methods here
-}
-
+class Song extends Model {}
 
 Song.init({
     SongID: {
