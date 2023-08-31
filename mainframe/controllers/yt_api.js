@@ -67,14 +67,22 @@ const ytMusicFunction = {
                         "artistName":  ArtistBasic[0].name
                     }
                     songs.push(jsonObj);
-                    
                 }
             }
             return res.status(200).json(songs);
             } catch (error) {
             res.status(500).json({ "error": 'An error occurred' });
             }
-    }
+        },
+        getSearchRecommendation: async(req, res) => {
+            try{
+                await ytmusic.initialize();
+                const searchResult = await ytmusic.getSearchSuggestions(req.body.searchWord);
+                res.status(200).json(searchResult)
+            }catch(err){
+                res.status(500).json({ "error": 'An error occurred' });
+            }
+        }
     };
     
 module.exports = ytMusicFunction
